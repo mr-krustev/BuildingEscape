@@ -21,6 +21,7 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Owner = GetOwner();
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 	UE_LOG(LogTemp, Warning, TEXT("Actor that opens is %s."), *ActorThatOpens->GetName())
 }
@@ -34,8 +35,9 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// Poll TriggerVolume
 	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
 		OpenDoor();
+		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
-	else {
+	else if (GetWorld()->GetTimeSeconds() >= (LastDoorOpenTime + DoorCloseDelay)){
 		CloseDoor();
 	}
 
@@ -43,18 +45,10 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UOpenDoor::OpenDoor()
 {
-	AActor* Owner = GetOwner();
-	// Create a rotator.
-	FRotator NewRotation{ 0.0f, -60.0f, 0.0f };
-	// Set the door rotation.
-	Owner->SetActorRotation(NewRotation);
+	Owner->SetActorRotation(FRotator{ 0.0f, OpenAngle, 0.0f });
 }
 
 void UOpenDoor::CloseDoor()
 {
-	AActor* Owner = GetOwner();
-	// Create a rotator.
-	FRotator NewRotation{ 0.0f, 0.0f, 0.0f };
-	// Set the door rotation.
-	Owner->SetActorRotation(NewRotation);
+	Owner->SetActorRotation(FRotator{ 0.0f, 0.0f, 0.0f });
 }
