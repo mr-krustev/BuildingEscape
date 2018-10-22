@@ -2,6 +2,7 @@
 
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -20,11 +21,8 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Owner = GetOwner();
-	// Create a rotator.
-	FRotator NewRotation{ 0.0f, -60.0f, 0.0f };
-	// Set the door rotation.
-	Owner->SetActorRotation(NewRotation);
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	UE_LOG(LogTemp, Warning, TEXT("Actor that opens is %s."), *ActorThatOpens->GetName())
 }
 
 
@@ -33,6 +31,30 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Poll TriggerVolume
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+		OpenDoor();
+	}
+	else {
+		CloseDoor();
+	}
+
 }
 
+void UOpenDoor::OpenDoor()
+{
+	AActor* Owner = GetOwner();
+	// Create a rotator.
+	FRotator NewRotation{ 0.0f, -60.0f, 0.0f };
+	// Set the door rotation.
+	Owner->SetActorRotation(NewRotation);
+}
+
+void UOpenDoor::CloseDoor()
+{
+	AActor* Owner = GetOwner();
+	// Create a rotator.
+	FRotator NewRotation{ 0.0f, 0.0f, 0.0f };
+	// Set the door rotation.
+	Owner->SetActorRotation(NewRotation);
+}
