@@ -13,6 +13,8 @@ Content/StarterContent/HDRI
 # VS Generated Files #
 ######################
 *.VC.db*
+*.sln
+*.vs.open
 
 # Visual Studio 2015 user specific files
 .vs/
