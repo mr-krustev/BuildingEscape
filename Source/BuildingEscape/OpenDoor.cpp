@@ -33,7 +33,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll TriggerVolume
-	if (GetTotalMassOfActorOnPlate() > TriggerMass) {
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass) {
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
@@ -53,7 +53,7 @@ void UOpenDoor::CloseDoor()
 	Owner->SetActorRotation(FRotator{ 0.0f, 0.0f, 0.0f });
 }
 
-float UOpenDoor::GetTotalMassOfActorOnPlate()
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
 {
 	float TotalMass = 0.f;
 
