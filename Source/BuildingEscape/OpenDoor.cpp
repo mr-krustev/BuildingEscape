@@ -22,8 +22,11 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-
 	Owner = GetOwner();
+	if (!PressurePlate) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing trigger volume pressure plate."), *(Owner->GetName()))
+	}
 }
 
 
@@ -32,6 +35,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!PressurePlate) { return; }
 	// Poll TriggerVolume
 	if (GetTotalMassOfActorsOnPlate() > TriggerMass) {
 		OpenDoor();
@@ -57,6 +61,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 {
 	float TotalMass = 0.f;
 
+	if (!PressurePlate) { return TotalMass; }
 	TArray<AActor*> OverlappingActors;
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
 
