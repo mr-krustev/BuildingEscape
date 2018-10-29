@@ -22,13 +22,11 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	Owner = GetOwner();
 	if (!PressurePlate) 
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s: Missing trigger volume pressure plate."), *(Owner->GetName()))
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing trigger volume pressure plate."), *(GetOwner()->GetName()))
 	}
 }
-
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -36,25 +34,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (!PressurePlate) { return; }
-	// Poll TriggerVolume
+
 	if (GetTotalMassOfActorsOnPlate() > TriggerMass) {
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
 	}
-	else if (GetWorld()->GetTimeSeconds() >= (LastDoorOpenTime + DoorCloseDelay)){
-		CloseDoor();
+	else 	{
+		OnClose.Broadcast();
 	}
-
-}
-
-void UOpenDoor::OpenDoor()
-{
-	Owner->SetActorRotation(FRotator{ 0.0f, OpenAngle, 0.0f });
-}
-
-void UOpenDoor::CloseDoor()
-{
-	Owner->SetActorRotation(FRotator{ 0.0f, 0.0f, 0.0f });
 }
 
 float UOpenDoor::GetTotalMassOfActorsOnPlate()
